@@ -282,17 +282,17 @@ Expected response from the live deployment:
 
 ## Current API limitation
 
-The current `/predict` endpoint expects already engineered feature columns that match the trained model input. Supporting raw customer-style JSON input is planned for the next implementation phase.
+The current `/predict` endpoint now accepts raw customer-style JSON fields and converts them into the trained feature schema internally. The main remaining limitation is operational: the live EC2 instance still uses a manually copied model file unless an IAM role is attached for direct S3 access.
 
 ## S3 helper foundation
 
-Day 1 includes a small S3 utility scaffold in `src/aws_io.py`. It provides helper functions to:
+The repository includes a small S3 utility scaffold in `src/aws_io.py`. It provides helper functions to:
 
 - build S3 URIs
 - upload local files to S3
 - download S3 objects to local paths
 
-This foundation will be wired into preprocessing, training, and deployment in the next phase.
+The app code now supports S3-backed model retrieval when `S3_BUCKET` and `S3_MODEL_KEY` are configured.
 
 ## Monitoring and deployment evidence
 
@@ -303,4 +303,33 @@ The repository currently includes screenshots showing:
 - CloudWatch EC2 monitoring
 - FastAPI endpoint exposure
 
-The next implementation phase will convert more of that process from manual steps into explicit deployment and artifact-management code.
+The remaining deployment improvement is to switch the EC2 instance from manual model copy to IAM-role-based S3 access and to capture the final submission screenshots/artifacts.
+
+## Current project status
+
+### Completed
+
+- Telco churn dataset is stored in the repository and preprocessing is scripted in `src/preprocess.py`.
+- Train/test splits and processed feature files are generated automatically.
+- A Random Forest model can be trained with `src/train.py`.
+- The trained model artifact has been stored in S3 at `s3://telco-churn-aws/data/models/model.pkl`.
+- An EC2 instance was launched in `us-east-2` and the FastAPI app was deployed there.
+- The FastAPI docs endpoint is live at `http://3.143.205.27:8000/docs`.
+- The `/predict` endpoint has been validated with a real request and returns a successful `200` response.
+- The API is configured to run as a persistent `systemd` service named `telco-churn-api`.
+- The repository now includes deployment assets under `deploy/` and basic regression tests under `tests/`.
+
+### Still required for final submission
+
+- Add the final architecture diagram source file, ideally a `drawio` file and exported image.
+- Add a cost estimate artifact from AWS Pricing Calculator.
+- Add a project timeline / work breakdown artifact.
+- Capture final screenshots for S3, EC2, FastAPI `/docs`, successful `/predict`, `systemctl status`, and CloudWatch.
+- Decide whether to attach an IAM role to EC2 so the instance can pull the model from S3 without manual file copy.
+- Finalize the written report / summary and the slide deck for submission.
+
+### Nice-to-have cleanup
+
+- Move the current EC2 setup from manual commands to the tracked `deploy/setup_ec2.sh` flow.
+- Keep the live EC2 instance in sync with branch `codex/day1-reproducibility`.
+- If time permits, verify CloudWatch logging or alarms beyond the instance-level metrics screenshot.
