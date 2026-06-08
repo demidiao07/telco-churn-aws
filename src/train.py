@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 import joblib
 import pandas as pd
@@ -8,6 +9,7 @@ from sklearn.metrics import accuracy_score
 
 PROCESSED_DIR = Path("data/processed")
 MODEL_PATH = Path("models/model.pkl")
+FEATURE_COLUMNS_PATH = Path("models/feature_columns.json")
 
 
 def load_training_data(processed_dir: Path = PROCESSED_DIR) -> tuple:
@@ -31,6 +33,12 @@ def save_model(model: RandomForestClassifier, model_path: Path = MODEL_PATH) -> 
     return model_path
 
 
+def save_feature_columns(feature_columns, feature_columns_path: Path = FEATURE_COLUMNS_PATH) -> Path:
+    feature_columns_path.parent.mkdir(parents=True, exist_ok=True)
+    feature_columns_path.write_text(json.dumps(list(feature_columns), indent=2))
+    return feature_columns_path
+
+
 def main() -> None:
     x_train, x_test, y_train, y_test = load_training_data()
     model = build_model()
@@ -39,9 +47,11 @@ def main() -> None:
     preds = model.predict(x_test)
     acc = accuracy_score(y_test, preds)
     saved_model_path = save_model(model)
+    saved_feature_columns_path = save_feature_columns(x_train.columns)
 
     print(f"Accuracy: {acc:.4f}")
     print(f"Model saved to {saved_model_path}")
+    print(f"Feature columns saved to {saved_feature_columns_path}")
 
 
 if __name__ == "__main__":

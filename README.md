@@ -75,6 +75,7 @@ The `.env.example` file contains the default AWS bucket and path settings used f
 
 - `AWS_REGION=us-east-2`
 - `S3_BUCKET=telco-churn-aws`
+- `S3_MODEL_KEY=data/models/model.pkl`
 - `S3_RAW_PREFIX=raw/`
 - `S3_PROCESSED_PREFIX=processed/`
 - `S3_MODEL_PREFIX=models/`
@@ -158,6 +159,8 @@ pip install fastapi uvicorn
 
 ### 3. Copy the trained model onto EC2
 
+Recommended approach: attach an IAM role to the EC2 instance with at least `s3:GetObject` permission for `s3://telco-churn-aws/data/models/model.pkl`, then let the app or setup script fetch the model directly from S3.
+
 If the EC2 instance does not yet have an IAM role with S3 access, download `model.pkl` from the S3 console to the local machine and then copy it to EC2:
 
 ```bash
@@ -168,6 +171,12 @@ Verify on EC2:
 
 ```bash
 ls -lh ~/telco-churn-aws/models/model.pkl
+```
+
+IAM-role-based pull on EC2:
+
+```bash
+aws s3 cp s3://telco-churn-aws/data/models/model.pkl ~/telco-churn-aws/models/model.pkl
 ```
 
 ### 4. Run the API manually

@@ -4,7 +4,7 @@ pandas==2.3.0
 numpy==2.0.2
 matplotlib==3.9.4
 seaborn==0.13.2
-scikit-learn==1.6.1
+scikit-learn==1.5.2
 boto3==1.38.28
 pyyaml==6.0.2
 joblib==1.5.1
