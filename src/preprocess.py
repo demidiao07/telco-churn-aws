@@ -1,9 +1,12 @@
+from pathlib import Path
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
-RAW_PATH = "data/raw/telco_customer_churn.csv"
-PROCESSED_PATH = "data/processed/telco_churn_processed.csv"
+RAW_PATH = Path("data/raw/telco_customer_churn.csv")
+PROCESSED_DIR = Path("data/processed")
+PROCESSED_PATH = PROCESSED_DIR / "telco_churn_processed.csv"
 
 
 def load_data(path: str) -> pd.DataFrame:
@@ -42,6 +45,8 @@ def encode_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+
     df = load_data(RAW_PATH)
     df = clean_data(df)
     df = encode_features(df)
@@ -59,10 +64,10 @@ def main():
         stratify=y
     )
 
-    X_train.to_csv("data/processed/X_train.csv", index=False)
-    X_test.to_csv("data/processed/X_test.csv", index=False)
-    y_train.to_csv("data/processed/y_train.csv", index=False)
-    y_test.to_csv("data/processed/y_test.csv", index=False)
+    X_train.to_csv(PROCESSED_DIR / "X_train.csv", index=False)
+    X_test.to_csv(PROCESSED_DIR / "X_test.csv", index=False)
+    y_train.to_csv(PROCESSED_DIR / "y_train.csv", index=False)
+    y_test.to_csv(PROCESSED_DIR / "y_test.csv", index=False)
 
     print(f"Processed data saved to {PROCESSED_PATH}")
     print(f"Processed shape: {df.shape}")
