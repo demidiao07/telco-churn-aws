@@ -1,0 +1,17 @@
+[Unit]
+Description=Telco Churn FastAPI
+After=network.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user/telco-churn-aws
+Environment="PATH=/home/ec2-user/telco-churn-aws/.venv/bin"
+Environment="MODEL_PATH=/home/ec2-user/telco-churn-aws/models/model.pkl"
+Environment="FEATURE_COLUMNS_PATH=/home/ec2-user/telco-churn-aws/models/feature_columns.json"
+Environment="S3_BUCKET=telco-churn-aws"
+Environment="S3_MODEL_KEY=data/models/model.pkl"
+ExecStart=/home/ec2-user/telco-churn-aws/.venv/bin/uvicorn src.app:app --host 0.0.0.0 --port 8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
