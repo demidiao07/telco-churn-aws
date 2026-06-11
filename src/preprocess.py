@@ -49,7 +49,6 @@ def encode_features(df: pd.DataFrame) -> pd.DataFrame:
     return df_encoded
 
 
-
 def main():
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     FEATURE_COLUMNS_PATH.parent.mkdir(parents=True, exist_ok=True)

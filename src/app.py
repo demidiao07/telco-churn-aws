@@ -1,9 +1,13 @@
+import logging
 import os
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from src.inference import build_feature_frame, load_feature_columns, load_model
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -37,16 +41,26 @@ class CustomerFeatures(BaseModel):
     MonthlyCharges: float
     TotalCharges: float
 
+
 @app.get("/")
 def home():
     return {"message": "Telco Churn API is running"}
 
+
 @app.post("/predict")
 def predict(features: CustomerFeatures):
-    payload = features.model_dump() if hasattr(features, "model_dump") else features.dict()
+    payload = (
+        features.model_dump() if hasattr(features, "model_dump") else features.dict()
+    )
+    logger.info("Received prediction request: %s", payload)
     feature_frame = build_feature_frame(payload, feature_columns)
     prediction = model.predict(feature_frame)[0]
     probability = model.predict_proba(feature_frame)[0][1]
+    logger.info(
+        "Prediction result: prediction=%d, churn_probability=%.4f",
+        int(prediction),
+        float(probability),
+    )
 
     return {
         "prediction": int(prediction),

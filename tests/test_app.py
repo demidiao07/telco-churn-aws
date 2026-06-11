@@ -46,6 +46,7 @@ class InferenceTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temp_dir:
             model_path = Path(temp_dir) / "models" / "model.pkl"
+
             def fake_download(bucket, key, local_path):
                 destination = Path(local_path)
                 destination.parent.mkdir(parents=True, exist_ok=True)

@@ -47,7 +47,8 @@ def load_feature_columns(
         return pd.read_csv(fallback_path).columns.tolist()
 
     raise FileNotFoundError(
-        "No feature column metadata found. Expected models/feature_columns.json or data/processed/X_train.csv."
+        "No feature column metadata found. "
+        "Expected models/feature_columns.json or data/processed/X_train.csv."
     )
 
 
@@ -76,5 +77,7 @@ def load_model(
     s3_bucket: str = None,
     s3_key: str = None,
 ):
-    resolved_model_path = ensure_model_artifact(model_path, s3_bucket=s3_bucket, s3_key=s3_key)
+    resolved_model_path = ensure_model_artifact(
+        model_path, s3_bucket=s3_bucket, s3_key=s3_key
+    )
     return joblib.load(resolved_model_path)
